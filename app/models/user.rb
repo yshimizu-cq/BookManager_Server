@@ -8,6 +8,7 @@ class User < ApplicationRecord
 
   validates :password, presence: true,
                        length: { minimum: 6 }
+  has_many :books
   has_secure_password
   has_secure_token
 end

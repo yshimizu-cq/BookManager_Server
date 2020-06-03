@@ -2,9 +2,9 @@ class Api::Vi::UsersController < ApplicationController
   def sign_up
     sign_up_user = User.new(user_params)
     if sign_up_user.save
-      render json: { status: "200", data: user }
+      render json: { status: "200", data: sign_up_user }
     else
-      render json: { status: "400", data: user.errors.fullmessages }
+      render json: { status: "400", data: sign_up_user.errors.fullmessages }
     end
   end
 
