@@ -45,6 +45,9 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'rubocop-airbnb'
   gem 'faker'
+  gem 'pry-rails'
+  gem 'pry-byebug'
+  gem 'pry'
 end
 
 group :test do

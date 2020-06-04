@@ -17,3 +17,5 @@ services:
       - "3000:3000"
     links:
       - db
+    tty: true
+    stdin_open: true
