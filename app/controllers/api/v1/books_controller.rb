@@ -9,7 +9,7 @@ class Api::V1::BooksController < ApplicationController
     if book.save
       render json: { status: "200", result: book }
     else
-      render json: { status: "400", error: book.errors.fullmessages }
+      render json: { status: "400", error: book.errors.full_messages }
     end
   end
 
@@ -18,7 +18,7 @@ class Api::V1::BooksController < ApplicationController
     if book.update_attributes(book_params)
       render json: { status: "200", result: book }
     else
-      render json: { status: "400", error: book.errors.fullmessages }
+      render json: { status: "400", error: book.errors.full_messages }
     end
   end
 
