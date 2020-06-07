@@ -1,6 +1,4 @@
 class Book < ApplicationRecord
-  # require 'base64'
-
   belongs_to :user
   validates :name, presence: true
 
