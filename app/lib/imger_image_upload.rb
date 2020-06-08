@@ -3,7 +3,7 @@ require 'httpclient'
 class ImgerImageUpload
   def self.upload_image(image_url)
     http_client = HTTPClient.new
-binding.pry    
+# binding.pry
     response = http_client.post(URI.parse(ENV['IMGER_URL']),
                                 { image: image_url },
                                 { Authorization: "Client-ID #{ENV['CLIENT_ID']}" })

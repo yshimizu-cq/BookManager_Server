@@ -5,7 +5,6 @@ class User < ApplicationRecord
                     length: { maximum: 255 },
                     uniqueness: true,
                     format: { with: VALID_EMAIL_REGEX }
-
   validates :password, presence: true,
                        length: { minimum: 6 }
   has_many :books
