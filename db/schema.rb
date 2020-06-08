@@ -28,8 +28,6 @@ ActiveRecord::Schema.define(version: 2020_06_03_093952) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "token"
-    t.index ["token"], name: "index_users_on_token", unique: true
   end
 
   add_foreign_key "books", "users"
