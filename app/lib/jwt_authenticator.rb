@@ -16,7 +16,7 @@ module JwtAuthenticator
 
   # 暗号化処理
   def encode(user_id)
-    payload = { user_id: user_id, exp: 1.month.from_now.to_i } # 期限を１ヶ月に設定
+    payload = { user_id: user_id, exp: 1.month.from_now.to_i } # 期限を1ヶ月に設定
     JWT.encode(payload, SECRET_KEY_BASE, 'HS256')
   end
 
