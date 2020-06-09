@@ -18,9 +18,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def login
-    login_user = User.find_by(email: params[:email].downcase)
+    login_user = User.find_by(email: params[:email])
     if login_user && login_user.authenticate(params[:password])
-      response.headers['X-Authentication-Token'] = encode(login_user.id) # jwtを発行しレスポンスヘッダーに設定
       render json: {
         status: "200",
         result: { id: login_user.id, email: login_user.email, token: encode(login_user.id) },

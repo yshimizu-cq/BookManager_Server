@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :book do
-    association :user # 関連するuserオブジェクトも自動的に作成
-    name { "sample_book" }
+    name { Faker::Book.title }
     image_url { "" }
-    price { 3000 }
-    purchase_date { "2020-06-01" }
+    price { Faker::Number.number(digits: 4) }
+    purchase_date { Faker::Date.between(from: 2.years.ago, to: Date.today) }
+
+    association :user # 関連するuserオブジェクトも自動的に作成
   end
 end
