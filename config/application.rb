@@ -28,6 +28,8 @@ module BookmanagerServer
     # the framework and any gems in your application.
     config.time_zone = 'Tokyo'
     config.active_record.default_timezone = :local
+    config.i18n.default_locale = :ja # 日本語化
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.yml').to_s] # ja.ymlにパスを通す
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.

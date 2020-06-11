@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2020_06_03_093952) do
 
   create_table "books", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "image_url"
-    t.string "name"
+    t.string "name", null: false
     t.integer "price"
     t.date "purchase_date"
     t.bigint "user_id"
@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(version: 2020_06_03_093952) do
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "email"
-    t.string "password_digest"
+    t.string "email", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

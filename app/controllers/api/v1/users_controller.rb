@@ -20,7 +20,7 @@ class Api::V1::UsersController < ApplicationController
                                      email: login_user.email,
                                      token: encode(login_user.id) })
     else
-      render_failure_response(401, "ログインに失敗しました")
+      render_failure_response(401, I18n.t('errors.messages.invalid_email_or_password'))
     end
   end
 

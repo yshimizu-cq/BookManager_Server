@@ -1,7 +1,4 @@
-class ApplicationController < ActionController::API
-
-  def render
-
+class ApplicationController < ActionController::API  
   def current_user
     # メモ化（2回目以降、@current_userが未定義でnilなのか計算した結果がnilなのかを区別して処理）
     return @current_user if instance_variable_defined?(:@current_user)
