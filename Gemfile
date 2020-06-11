@@ -33,7 +33,6 @@ gem 'kaminari' # ページネーション
 gem 'httpclient' # 外部API（Imger）にHTTPリクエスト送信
 gem 'rails-i18n' # 日本語化対応
 
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -44,6 +43,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'pry'
   gem 'dotenv-rails' # 環境変数管理用
+  gem 'webmock', require: false # RspecでのImgurスタブ化
 end
 
 group :development do

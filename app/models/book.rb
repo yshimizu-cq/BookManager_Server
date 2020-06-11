@@ -6,7 +6,7 @@ class Book < ApplicationRecord
 
   def convert_image
     if image_url.present?
-      self.image_url = ImgerImageUpload.upload_image(image_url)
+      self.image_url = ImgurImageUpload.upload_image(image_url)
     end
   end
 end

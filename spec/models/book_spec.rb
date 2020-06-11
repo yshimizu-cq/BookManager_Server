@@ -10,8 +10,7 @@ RSpec.describe Book, type: :model do
 
     it "is invalid without a name" do
       book.name = nil
-      book.valid?
-      expect(book.errors[:name]).to include("can't be blank")
+      expect(book.valid?).to eq false
     end
   end
 end

@@ -3,55 +3,79 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Users", type: :request do
   let(:sing_up_user) { build(:user) }
   let(:invalid_user) { build(:user, :invalid) }
-  let(:login_user) { create(:user) }
+  let!(:login_user) { create(:user) }
 
-  describe "POST /sing_up" do
-    subject { -> { post api_v1_sign_up_path, params: {
-      email: sing_up_user.email,
-      password: sing_up_user.password,
-    }}}
+  describe "POST /sign_up" do
+    subject { -> { post api_v1_sign_up_path, params: params } }
 
-    it "response status 200" do
-      is_expected.to change(User, :count).by(1)
-      response_json = JSON.parse(@response.body) # JSON形式でレスポンス
-      expect(response_json["result"]).not_to be_blank
+    context "response success" do
+      let(:params) { { email: sing_up_user.email, password: sing_up_user.password } }
+      
+      # spec_helperにaggregate_failure定義
+      it "can sign up" do
+        is_expected.to change(User, :count).by(1)
+        expect(JSON.parse(@response.body)["result"]).to be_present # JSON形式でレスポンス
+      end
     end
 
-    it "can't sign up with invalid email" do
-      is_expected.not_to change(User, :count)
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).to be_blank
+    context "response error" do
+      context "with invalid email" do
+        let(:params) { { email: invalid_user.email, password: sing_up_user.password } }
+
+        it "can't sign up" do
+          is_expected.not_to change(User, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
+      
+      context "with duplidated email" do
+        let(:params) { { email: login_user.email, password: sing_up_user.password } }
+
+        it "can't sign up" do
+          is_expected.not_to change(User, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
     end
   end
 
   describe "POST /login" do
-    it "response status 200" do
-      post api_v1_login_path, params: {
-        email: login_user.email,
-        password: login_user.password,
-      }
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).not_to be_blank
+    context "response success" do
+      let(:params) { { email: login_user.email, password: login_user.password } }
+
+      it "can log in" do
+        post api_v1_login_path, params: {
+          email: login_user.email,
+          password: login_user.password,
+        }
+        expect(JSON.parse(@response.body)["result"]).to be_present
+      end
     end
 
-    it "can't login with invalid email" do
-      post api_v1_login_path, params: {
-        email: invalid_user.email,
-        password: invalid_user.password,
-      }
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).to be_blank
+    context "response error" do
+      context "with invalid email" do
+        let(:params) { { email: invalid_user.email, password: login_user.password } }
+
+        it "can't log in" do
+          post api_v1_login_path, params: {
+            email: invalid_user.email,
+            password: login_user.password,
+          }
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
+
+      context "with wrong password" do
+        let(:params) { { email: login_user.email, password: "wrong" } }
+        
+        it "can't log in" do
+          post api_v1_login_path, params: {
+            email: login_user.email,
+            password: "wrong_password",
+          }
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
     end
   end
 end
-
-# "subject rspec change"で検索
-# expect do
-#   post api_v1_sign_up_path, params: {
-#     email: invalid_user.email,
-#     password: invalid_user.password,
-#   }
-# end.not_to change(User, :count)
-# をまとめる
-# booksとusers
-

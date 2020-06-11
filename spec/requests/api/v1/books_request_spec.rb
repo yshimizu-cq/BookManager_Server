@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'webmock/rspec'
 
 RSpec.describe "Api::V1::Books", type: :request do
   include JwtAuthenticator
@@ -9,7 +10,7 @@ RSpec.describe "Api::V1::Books", type: :request do
   let(:new_book) { build(:book, user_id: user.id) }
 
   let(:headers_with_token) { { CONTENT_TYPE: "application/json", Authorization: encode(user.id) } }
-  let(:headers_without_token) { { CONTENT_TYPE: "application/json", Authorization: "" } }
+  let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
 
   describe "GET /books" do
     it "response status 200" do
@@ -18,49 +19,49 @@ RSpec.describe "Api::V1::Books", type: :request do
     end
   end
 
-  # imgur上限にかかったため以下テスト未確認 @2020/06/09
-
   describe "POST /books" do
-    it "response status 200" do
-      expect do
-        post api_v1_books_path,
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_with_token
-      end.to change(Book, :count).by(1)
-      response_json = pJSON.parse(@response.body)
-      expect(response_json["result"]).not_to be_blank
+    subject { -> { post api_v1_books_path, params: params, headers: headers } }
+
+    context "response success" do
+      let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
+      let(:headers) { headers_with_token }
+
+      it "can resister book" do
+        is_expected.to change(Book, :count).by(1)
+        expect(JSON.parse(@response.body)["result"]).to be_present
+      end
     end
 
-    it "can't create book without token" do
-      expect do
-        post api_v1_books_path,
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_without_token
-      end.not_to change(Book, :count)
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).to be_blank
+    context "response error" do
+      context "without token" do
+        let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
+        let(:headers) { headers_without_token }
+    
+        it "can't resister book" do
+          is_expected.not_to change(Book, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
     end
   end
 
   describe "PATCH /books/:id" do
     it "response status 200" do
       expect do
-        patch api_v1_book_path(book.id),
-              params: new_book.slice(:name, :image_url, :price, :purchase_date),
-              headers: headers_with_token
+        post api_v1_book_path(book.id),
+             params: new_book.slice(:name, :image_url, :price, :purchase_date),
+             headers: headers_with_token
       end.not_to change(Book, :count)
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).not_to be_blank
+      expect(JSON.parse(@response.body)["result"]).to be_present
     end
 
     it "can't update book without token" do
       expect do
-        patch api_v1_book_path(book.id),
-              params: new_book.slice(:name, :image_url, :price, :purchase_date),
-              headers: headers_without_token
+        post api_v1_book_path(book.id),
+             params: new_book.slice(:name, :image_url, :price, :purchase_date),
+             headers: headers_without_token
       end.not_to change(Book, :count)
-      response_json = JSON.parse(@response.body)
-      expect(response_json["result"]).to be_blank
+      expect(JSON.parse(@response.body)["error"]).to be_present
     end
   end
 end
