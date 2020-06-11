@@ -4,24 +4,25 @@ class Api::V1::BooksController < ApplicationController
 
   def index
     books = current_user.books.page(params[:page]).per(20)
-    render json: { status: "200", result: books }
+    render_success_response(200, books)
   end
 
   def create
     book = current_user.books.build(book_params)
     if book.save
-      render json: { status: "200", result: book }
+      render_success_response(200, book)
     else
-      render json: { status: "400", error: book.errors.full_messages }
+      render_failure_response(400, book.errors.full_messages)
     end
   end
 
   def update
-    book = current_user.books.find(params[:id])
+    book = current_user.books.find_by(id: params[:id])
+    render_failure_response(400, book.errors.full_messages) unless book
     if book.update_attributes(book_params)
-      render json: { status: "200", result: book }
+      render_success_response(200, book)
     else
-      render json: { status: "400", error: book.errors.full_messages }
+      render_failure_response(400, book.errors.full_messages)
     end
   end
 

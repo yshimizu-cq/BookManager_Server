@@ -11,7 +11,6 @@ module JwtAuthenticator
     payload = decode(encoded_token)
     @current_user = User.find_by(id: payload["user_id"])
     raise UnableAuthorizationError, "認証できません。" if @current_user.blank?
-    @current_user
   end
 
   # 暗号化処理

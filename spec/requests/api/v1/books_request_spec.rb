@@ -27,7 +27,7 @@ RSpec.describe "Api::V1::Books", type: :request do
              params: new_book.slice(:name, :image_url, :price, :purchase_date),
              headers: headers_with_token
       end.to change(Book, :count).by(1)
-      response_json = JSON.parse(@response.body)
+      response_json = pJSON.parse(@response.body)
       expect(response_json["result"]).not_to be_blank
     end
 
@@ -45,9 +45,9 @@ RSpec.describe "Api::V1::Books", type: :request do
   describe "PATCH /books/:id" do
     it "response status 200" do
       expect do
-        post api_v1_book_path(book.id),
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_with_token
+        patch api_v1_book_path(book.id),
+              params: new_book.slice(:name, :image_url, :price, :purchase_date),
+              headers: headers_with_token
       end.not_to change(Book, :count)
       response_json = JSON.parse(@response.body)
       expect(response_json["result"]).not_to be_blank
@@ -55,9 +55,9 @@ RSpec.describe "Api::V1::Books", type: :request do
 
     it "can't update book without token" do
       expect do
-        post api_v1_book_path(book.id),
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_without_token
+        patch api_v1_book_path(book.id),
+              params: new_book.slice(:name, :image_url, :price, :purchase_date),
+              headers: headers_without_token
       end.not_to change(Book, :count)
       response_json = JSON.parse(@response.body)
       expect(response_json["result"]).to be_blank

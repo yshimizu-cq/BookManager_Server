@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  before_save { self.email = email.downcase }
+  before_save { self.email = email.downcase }  # email.downcase!（破壊的メソッド）使える
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i.freeze
   validates :email, presence: true,
                     length: { maximum: 255 },
