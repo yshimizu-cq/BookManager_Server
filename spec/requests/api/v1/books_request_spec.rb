@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'webmock/rspec'
 
 RSpec.describe "Api::V1::Books", type: :request do
   include JwtAuthenticator
@@ -18,6 +17,8 @@ RSpec.describe "Api::V1::Books", type: :request do
       expect(response.status).to eq 200
     end
   end
+
+####################### Imgur制限のため以下テスト未確認 #########################
 
   describe "POST /books" do
     subject { -> { post api_v1_books_path, params: params, headers: headers } }
