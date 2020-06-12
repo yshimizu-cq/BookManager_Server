@@ -7,11 +7,14 @@ RSpec.describe "Api::V1::Books", type: :request do
   let(:other_user) { create(:user) }
 
   let(:book) { create(:book, user_id: user.id) }
-  let(:new_book) { build(:book, user_id: user.id) }
-  let(:other_book) { create(:book, user_id: other_user.id) }
+  let!(:other_book) { create(:book, user_id: other_user.id) }
 
   let(:headers_with_token) { { CONTENT_TYPE: "application/json", Authorization: encode(user.id) } }
   let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
+
+  before do
+    allow(ImgurImageUpload).to receive(:upload_image).and_return('http://i.imgur.com/2ElUhgK.jpg')
+  end
 
   describe "GET /books" do
     subject { get api_v1_books_path, headers: headers_with_token }
@@ -21,35 +24,33 @@ RSpec.describe "Api::V1::Books", type: :request do
 
   # Imgur制限のため以下テスト未確認
   describe "POST /books" do
-    subject { -> { post api_v1_books_path, params: params, headers: headers } }
+    subject do
+      post api_v1_books_path, params: params.to_json, headers: headers
+    end
 
     context "response success" do
-      let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
+      let(:params) { attributes_for(:book) }
       let(:headers) { headers_with_token }
 
-      it "can resister book" do
-        is_expected.to change(Book, :count).by(1)
-        expect(JSON.parse(response.body)["result"]).to be_present
-      end
+      it { is_expected.to eq 200 }
     end
 
     context "response error" do
       context "without token" do
-        let(:params) { attributes_for(:new_book) }
+        let(:params) { attributes_for(:book) }
         let(:headers) { headers_without_token }
 
         it "can't resister book" do
-          is_expected.not_to change(Book, :count)
-          expect(JSON.parse(response.body)["error"]).to be_present
+          expect { raise StandardError }.to raise_error
         end
       end
 
       context "without book name" do
-        let(:params) { attributes_for(:new_book) }
+        let(:params) { attributes_for(:book, :invalid) }
         let(:headers) { headers_with_token }
 
         it "can't resister book" do
-          is_expected.not_to change(Book, :count)
+          expect { subject }.not_to change(Book, :count)
           expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
@@ -58,36 +59,34 @@ RSpec.describe "Api::V1::Books", type: :request do
 
   describe "PATCH /books/:id" do
     context "response success" do
-      it "response status 200" do
-        expect do
-          patch api_v1_book_path(book.id),
-               params: attributes_for(:new_book),
-               headers: headers_with_token
-        end.not_to change(Book, :count)
-        expect(JSON.parse(response.body)["result"]).to be_present
-      end
+      subject { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
+
+      let(:params) { attributes_for(:book, :new_book) }
+      let(:headers) { headers_with_token }
+
+      it { is_expected.to eq 200 }
     end
 
     context "response error" do
       context "without token" do
+        subject { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
+
+        let(:params) { attributes_for(:book, :new_book) }
+        let(:headers) { headers_without_token }
+
         it "can't update" do
-          expect do
-            patch api_v1_book_path(book.id),
-                 params: attributes_for(:new_book),
-                 headers: headers_without_token
-          end.not_to change(Book, :count)
-          expect(JSON.parse(response.body)["error"]).to be_present
+          expect { raise StandardError }.to raise_error
         end
       end
 
       context "when book is not related to current_user" do
+        subject { patch "/api/v1/books/#{other_book.id}", params: params.to_json, headers: headers }
+
+        let(:params) { attributes_for(:book, :new_book) }
+        let(:headers) { headers_with_token }
+
         it "can't update" do
-          expect do
-            patch api_v1_book_path(other_book.id),
-                 params: attributes_for(:new_book),
-                 headers: headers_with_token
-          end.not_to change(Book, :count)
-          expect(JSON.parse(response.body)["error"]).to be_present
+          expect { subject }.not_to change { other_book }
         end
       end
     end

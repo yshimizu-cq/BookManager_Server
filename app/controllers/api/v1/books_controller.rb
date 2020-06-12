@@ -18,7 +18,8 @@ class Api::V1::BooksController < ApplicationController
 
   def update
     book = current_user.books.find_by(id: params[:id])
-    return render_failure_response(400, book.errors.full_messages) unless book # rerurnで処理を終える
+    # rerurnで処理を終える
+    return render_failure_response(400, I18n.t('errors.messages.missing_book')) unless book
     if book.update_attributes(book_params)
       render_success_response(200, book)
     else
