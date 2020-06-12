@@ -10,7 +10,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
     context "response success" do
       let(:params) { { email: sing_up_user.email, password: sing_up_user.password } }
-      
+
       # spec_helperにaggregate_failure定義
       it "can sign up" do
         is_expected.to change(User, :count).by(1)
@@ -27,7 +27,7 @@ RSpec.describe "Api::V1::Users", type: :request do
           expect(JSON.parse(@response.body)["error"]).to be_present
         end
       end
-      
+
       context "with duplidated email" do
         let(:params) { { email: login_user.email, password: sing_up_user.password } }
 
@@ -67,7 +67,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
       context "with wrong password" do
         let(:params) { { email: login_user.email, password: "wrong" } }
-        
+
         it "can't log in" do
           post api_v1_login_path, params: {
             email: login_user.email,

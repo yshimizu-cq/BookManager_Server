@@ -37,7 +37,7 @@ RSpec.describe "Api::V1::Books", type: :request do
       context "without token" do
         let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
         let(:headers) { headers_without_token }
-    
+
         it "can't resister book" do
           is_expected.not_to change(Book, :count)
           expect(JSON.parse(@response.body)["error"]).to be_present
