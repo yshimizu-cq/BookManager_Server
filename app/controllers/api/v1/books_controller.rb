@@ -1,5 +1,5 @@
 class Api::V1::BooksController < ApplicationController
-  include JwtAuthenticator
+  include JwtAuthenticatable
   before_action :jwt_authenticate
 
   def index

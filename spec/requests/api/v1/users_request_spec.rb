@@ -14,7 +14,7 @@ RSpec.describe "Api::V1::Users", type: :request do
       # spec_helperにaggregate_failures定義
       it "can sign up" do
         is_expected.to change(User, :count).by(1)
-        expect(JSON.parse(@response.body)["result"]).to be_present # JSON形式でレスポンス
+        expect(JSON.parse(response.body)["result"]).to be_present # JSON形式でレスポンス
       end
     end
 
@@ -24,7 +24,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
         it "can't sign up" do
           is_expected.not_to change(User, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
 
@@ -33,7 +33,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
         it "can't sign up" do
           is_expected.not_to change(User, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe "Api::V1::Users", type: :request do
           email: login_user.email,
           password: login_user.password,
         }
-        expect(JSON.parse(@response.body)["result"]).to be_present
+        expect(JSON.parse(response.body)["result"]).to be_present
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe "Api::V1::Users", type: :request do
             email: invalid_user.email,
             password: login_user.password,
           }
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
 
@@ -73,7 +73,7 @@ RSpec.describe "Api::V1::Users", type: :request do
             email: login_user.email,
             password: "wrong_password",
           }
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
     end

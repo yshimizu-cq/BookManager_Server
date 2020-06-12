@@ -1,6 +1,6 @@
 require "jwt"
 
-module JwtAuthenticator
+module JwtAuthenticatable
   SECRET_KEY_BASE = Rails.application.secrets.secret_key_base
 
   # ヘッダーの認証トークンを復号化してユーザー認証を行う

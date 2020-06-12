@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Books", type: :request do
-  include JwtAuthenticator
+  include JwtAuthenticatable
 
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
@@ -24,12 +24,12 @@ RSpec.describe "Api::V1::Books", type: :request do
     subject { -> { post api_v1_books_path, params: params, headers: headers } }
 
     context "response success" do
-      let(:params) { attributes_for(:new_book) }
+      let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
       let(:headers) { headers_with_token }
 
       it "can resister book" do
         is_expected.to change(Book, :count).by(1)
-        expect(JSON.parse(@response.body)["result"]).to be_present
+        expect(JSON.parse(response.body)["result"]).to be_present
       end
     end
 
@@ -40,7 +40,7 @@ RSpec.describe "Api::V1::Books", type: :request do
 
         it "can't resister book" do
           is_expected.not_to change(Book, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
 
@@ -50,7 +50,7 @@ RSpec.describe "Api::V1::Books", type: :request do
 
         it "can't resister book" do
           is_expected.not_to change(Book, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
     end
@@ -60,11 +60,11 @@ RSpec.describe "Api::V1::Books", type: :request do
     context "response success" do
       it "response status 200" do
         expect do
-          post api_v1_book_path(book.id),
+          patch api_v1_book_path(book.id),
                params: attributes_for(:new_book),
                headers: headers_with_token
         end.not_to change(Book, :count)
-        expect(JSON.parse(@response.body)["result"]).to be_present
+        expect(JSON.parse(response.body)["result"]).to be_present
       end
     end
 
@@ -72,22 +72,22 @@ RSpec.describe "Api::V1::Books", type: :request do
       context "without token" do
         it "can't update" do
           expect do
-            post api_v1_book_path(book.id),
+            patch api_v1_book_path(book.id),
                  params: attributes_for(:new_book),
                  headers: headers_without_token
           end.not_to change(Book, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
 
       context "when book is not related to current_user" do
         it "can't update" do
           expect do
-            post api_v1_book_path(other_book.id),
+            patch api_v1_book_path(other_book.id),
                  params: attributes_for(:new_book),
                  headers: headers_with_token
           end.not_to change(Book, :count)
-          expect(JSON.parse(@response.body)["error"]).to be_present
+          expect(JSON.parse(response.body)["error"]).to be_present
         end
       end
     end

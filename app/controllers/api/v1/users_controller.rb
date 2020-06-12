@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  include JwtAuthenticator
+  include JwtAuthenticatable
 
   def sign_up
     sign_up_user = User.new(user_params)
