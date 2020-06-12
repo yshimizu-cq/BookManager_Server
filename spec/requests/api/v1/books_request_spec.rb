@@ -3,23 +3,23 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Books", type: :request do
   include JwtAuthenticator
 
-  let(:user) { create(:user) }  
-  let(:other_user) { create(:user) }  
+  let(:user) { create(:user) }
+  let(:other_user) { create(:user) }
 
   let(:book) { create(:book, user_id: user.id) }
-  let(:new_book) { build(:book, user_id: user.id) }  
-  let(:other_book) { create(:book, user_id: other_user.id) }  
-  
+  let(:new_book) { build(:book, user_id: user.id) }
+  let(:other_book) { create(:book, user_id: other_user.id) }
+
   let(:headers_with_token) { { CONTENT_TYPE: "application/json", Authorization: encode(user.id) } }
   let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
 
   describe "GET /books" do
     subject { get api_v1_books_path, headers: headers_with_token }
-    it{ is_expected.to eq 200 }
+
+    it { is_expected.to eq 200 }
   end
 
-####################### Imgur制限のため以下テスト未確認 #########################
-
+  # Imgur制限のため以下テスト未確認
   describe "POST /books" do
     subject { -> { post api_v1_books_path, params: params, headers: headers } }
 
