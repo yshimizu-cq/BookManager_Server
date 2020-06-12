@@ -12,10 +12,8 @@ RSpec.describe "Api::V1::Books", type: :request do
   let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
 
   describe "GET /books" do
-    it "response status 200" do
-      get api_v1_books_path, headers: headers_with_token
-      expect(response.status).to eq 200
-    end
+    subject { get api_v1_books_path, headers: headers_with_token }
+    it{ is_expected.to eq 200 }
   end
 
 ####################### Imgur制限のため以下テスト未確認 #########################

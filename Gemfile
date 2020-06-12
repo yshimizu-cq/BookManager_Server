@@ -43,6 +43,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'pry'
   gem 'dotenv-rails' # 環境変数管理用
+  gem 'rubocop-airbnb'
   gem 'webmock', require: false # RspecでのImgurスタブ化
 end
 
@@ -51,7 +52,6 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'rubocop-airbnb'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

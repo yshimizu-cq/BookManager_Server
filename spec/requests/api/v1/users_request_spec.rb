@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::Users", type: :request do
     context "response success" do
       let(:params) { { email: sing_up_user.email, password: sing_up_user.password } }
 
-      # spec_helperにaggregate_failure定義
+      # spec_helperにaggregate_failures定義
       it "can sign up" do
         is_expected.to change(User, :count).by(1)
         expect(JSON.parse(@response.body)["result"]).to be_present # JSON形式でレスポンス
