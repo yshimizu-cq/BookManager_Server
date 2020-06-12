@@ -22,7 +22,6 @@ RSpec.describe "Api::V1::Books", type: :request do
     it { is_expected.to eq 200 }
   end
 
-  # Imgur制限のため以下テスト未確認
   describe "POST /books" do
     subject do
       post api_v1_books_path, params: params.to_json, headers: headers
