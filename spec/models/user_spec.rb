@@ -20,7 +20,7 @@ RSpec.describe User, type: :model do
       end
 
       it "is invalid with a duplicate email" do
-        second_user = User.new(email: user.email, password: user.password)
+        second_user = User.new(email: user.email, password: "new_password")
         expect(second_user.valid?).to eq false
       end
     end

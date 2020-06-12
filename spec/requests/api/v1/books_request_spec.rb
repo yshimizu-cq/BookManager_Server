@@ -3,11 +3,13 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Books", type: :request do
   include JwtAuthenticator
 
-  let(:user) { create(:user) }
+  let(:user) { create(:user) }  
+  let(:other_user) { create(:user) }  
 
   let(:book) { create(:book, user_id: user.id) }
-  let(:new_book) { build(:book, user_id: user.id) }
-
+  let(:new_book) { build(:book, user_id: user.id) }  
+  let(:other_book) { create(:book, user_id: other_user.id) }  
+  
   let(:headers_with_token) { { CONTENT_TYPE: "application/json", Authorization: encode(user.id) } }
   let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
 
@@ -22,7 +24,7 @@ RSpec.describe "Api::V1::Books", type: :request do
     subject { -> { post api_v1_books_path, params: params, headers: headers } }
 
     context "response success" do
-      let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
+      let(:params) { attributes_for(:new_book) }
       let(:headers) { headers_with_token }
 
       it "can resister book" do
@@ -33,8 +35,18 @@ RSpec.describe "Api::V1::Books", type: :request do
 
     context "response error" do
       context "without token" do
-        let(:params) { new_book.slice(:name, :image_url, :price, :purchase_date) }
+        let(:params) { attributes_for(:new_book) }
         let(:headers) { headers_without_token }
+
+        it "can't resister book" do
+          is_expected.not_to change(Book, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
+
+      context "without book name" do
+        let(:params) { attributes_for(:new_book) }
+        let(:headers) { headers_with_token }
 
         it "can't resister book" do
           is_expected.not_to change(Book, :count)
@@ -45,22 +57,39 @@ RSpec.describe "Api::V1::Books", type: :request do
   end
 
   describe "PATCH /books/:id" do
-    it "response status 200" do
-      expect do
-        post api_v1_book_path(book.id),
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_with_token
-      end.not_to change(Book, :count)
-      expect(JSON.parse(@response.body)["result"]).to be_present
+    context "response success" do
+      it "response status 200" do
+        expect do
+          post api_v1_book_path(book.id),
+               params: attributes_for(:new_book),
+               headers: headers_with_token
+        end.not_to change(Book, :count)
+        expect(JSON.parse(@response.body)["result"]).to be_present
+      end
     end
 
-    it "can't update book without token" do
-      expect do
-        post api_v1_book_path(book.id),
-             params: new_book.slice(:name, :image_url, :price, :purchase_date),
-             headers: headers_without_token
-      end.not_to change(Book, :count)
-      expect(JSON.parse(@response.body)["error"]).to be_present
+    context "response error" do
+      context "without token" do
+        it "can't update" do
+          expect do
+            post api_v1_book_path(book.id),
+                 params: attributes_for(:new_book),
+                 headers: headers_without_token
+          end.not_to change(Book, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
+
+      context "when book is not related to current_user" do
+        it "can't update" do
+          expect do
+            post api_v1_book_path(other_book.id),
+                 params: attributes_for(:new_book),
+                 headers: headers_with_token
+          end.not_to change(Book, :count)
+          expect(JSON.parse(@response.body)["error"]).to be_present
+        end
+      end
     end
   end
 end

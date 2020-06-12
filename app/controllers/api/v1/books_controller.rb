@@ -18,7 +18,7 @@ class Api::V1::BooksController < ApplicationController
 
   def update
     book = current_user.books.find_by(id: params[:id])
-    render_failure_response(400, book.errors.full_messages) unless book
+    return render_failure_response(400, book.errors.full_messages) unless book # returnにしないと下も実行してしまう
     if book.update_attributes(book_params)
       render_success_response(200, book)
     else
