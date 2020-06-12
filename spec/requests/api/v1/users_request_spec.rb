@@ -9,7 +9,7 @@ RSpec.describe "Api::V1::Users", type: :request do
     subject { -> { post api_v1_sign_up_path, params: params } }
 
     context "response success" do
-      let(:params) { { email: sing_up_user.email, password: sing_up_user.password } }
+      let(:params) { { email: sign_up_user.email, password: sign_up_user.password } }
 
       # spec_helperにaggregate_failures定義
       it "can sign up" do
@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
     context "response error" do
       context "with invalid email" do
-        let(:params) { { email: invalid_user.email, password: sing_up_user.password } }
+        let(:params) { { email: invalid_user.email, password: sign_up_user.password } }
 
         it "can't sign up" do
           is_expected.not_to change(User, :count)
@@ -29,7 +29,7 @@ RSpec.describe "Api::V1::Users", type: :request do
       end
 
       context "with duplidated email" do
-        let(:params) { { email: login_user.email, password: sing_up_user.password } }
+        let(:params) { { email: login_user.email, password: sign_up_user.password } }
 
         it "can't sign up" do
           is_expected.not_to change(User, :count)

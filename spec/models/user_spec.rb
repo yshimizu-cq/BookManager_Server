@@ -9,15 +9,9 @@ RSpec.describe User, type: :model do
     end
 
     context "email" do
-      it "is invalid without a email" do
-        user.email = nil
-        expect(user.valid?).to eq false
-      end
-
-      it "is invalid with a longer email than 255 characters" do
-        user.email = "#{"a" * 256}@email.com"
-        expect(user.valid?).to eq false
-      end
+      it { should validate_presence_of(:email) }
+      it { should validate_length_of(:email).is_at_most(255) }
+      it { should validate_uniqueness_of(:email) }
 
       it "is invalid with a duplicate email" do
         second_user = User.new(email: user.email, password: "new_password")

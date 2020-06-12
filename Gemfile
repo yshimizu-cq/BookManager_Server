@@ -45,6 +45,7 @@ group :development, :test do
   gem 'dotenv-rails' # 環境変数管理用
   gem 'rubocop-airbnb'
   gem 'webmock', require: false # RspecでのImgurスタブ化
+  gem 'shoulda-matchers'
 end
 
 group :development do
