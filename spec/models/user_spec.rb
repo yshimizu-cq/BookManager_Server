@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe User, type: :model do 
+RSpec.describe User, type: :model do
   describe "relation" do
     it { should have_secure_password }
-    it { should have_many(:books)}
+    it { should have_many(:books) }
   end
 
   describe "validation" do
@@ -12,7 +12,7 @@ RSpec.describe User, type: :model do
 
       it { should validate_presence_of(:email) }
       it { should validate_length_of(:email).is_at_most(255) }
-      
+
       # it { should validate_uniqueness_of(:email).case_insensitive }だとbefore_saveの際にエラーが出るため
       it "is invalid with a duplicate email" do
         second_user = User.new(email: user.email, password: "new_password")
