@@ -15,8 +15,7 @@ RSpec.describe User, type: :model do
 
       # it { should validate_uniqueness_of(:email).case_insensitive }だとbefore_saveの際にエラーが出るため
       it "is invalid with a duplicate email" do
-        second_user = User.new(email: user.email, password: "new_password")
-        expect(second_user.valid?).to eq false
+        expect(user.dup).not_to be_valid
       end
     end
 

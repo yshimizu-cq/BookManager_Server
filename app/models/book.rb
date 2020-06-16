@@ -1,12 +1,9 @@
 class Book < ApplicationRecord
-  belongs_to :user
-  validates :name, presence: true
-
   before_save :convert_image # コールバック処理
+  validates :name, presence: true
+  belongs_to :user
 
   def convert_image
-    if image_url.present?
-      self.image_url = ImgurImageUpload.upload_image(image_url)
-    end
+    self.image_url = ImgurImageUploader.upload_image(image_url) if image_url.present?
   end
 end

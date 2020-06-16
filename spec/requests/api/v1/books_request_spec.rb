@@ -14,7 +14,7 @@ RSpec.describe "Api::V1::Books", type: :request do
   let(:headers_without_token) { { CONTENT_TYPE: "application/json" } }
 
   before do
-    allow(ImgurImageUpload).to receive(:upload_image).and_return('http://i.imgur.com/2ElUhgK.jpg')
+    allow(ImgurImageUploader).to receive(:upload_image).and_return('http://i.imgur.com/2ElUhgK.jpg')
   end
 
   describe "GET /books" do
@@ -60,7 +60,7 @@ RSpec.describe "Api::V1::Books", type: :request do
 
   describe "PATCH /books/:id" do
     context "when return response success" do
-      subject! { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
+      subject! { patch api_v1_books_path(book), params: params.to_json, headers: headers }
 
       let(:params) { attributes_for(:book, :new_book) }
       let(:headers) { headers_with_token }
