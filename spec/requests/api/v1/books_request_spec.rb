@@ -6,7 +6,8 @@ RSpec.describe "Api::V1::Books", type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
 
-  let(:book) { create(:book, user_id: user.id) }
+  let!(:book) { create(:book, user_id: user.id) }
+  let(:new_book) { create(:book, :new_book) }
   let!(:other_book) { create(:book, user_id: other_user.id) }
 
   let(:headers_with_token) { { CONTENT_TYPE: "application/json", Authorization: encode(user.id) } }
@@ -17,24 +18,25 @@ RSpec.describe "Api::V1::Books", type: :request do
   end
 
   describe "GET /books" do
-    subject { get api_v1_books_path, headers: headers_with_token }
+    subject! { get api_v1_books_path, headers: headers_with_token }
 
     it { is_expected.to eq 200 }
+    it "can show book" do
+      expect(JSON.parse(response.body)["result"][0]["name"]).to eq book.name
+    end
   end
 
   describe "POST /books" do
-    subject do
-      post api_v1_books_path, params: params.to_json, headers: headers
-    end
+    subject { post api_v1_books_path, params: params.to_json, headers: headers }
 
-    context "response success" do
+    context "when return response success" do
       let(:params) { attributes_for(:book) }
       let(:headers) { headers_with_token }
 
       it { is_expected.to eq 200 }
     end
 
-    context "response error" do
+    context "when return response error" do
       context "without token" do
         let(:params) { attributes_for(:book) }
         let(:headers) { headers_without_token }
@@ -57,16 +59,19 @@ RSpec.describe "Api::V1::Books", type: :request do
   end
 
   describe "PATCH /books/:id" do
-    context "response success" do
-      subject { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
+    context "when return response success" do
+      subject! { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
 
       let(:params) { attributes_for(:book, :new_book) }
       let(:headers) { headers_with_token }
 
       it { is_expected.to eq 200 }
+      it "can update" do
+        expect(JSON.parse(response.body)["result"]["name"]).to eq new_book.name
+      end
     end
 
-    context "response error" do
+    context "when return response error" do
       context "without token" do
         subject { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
 

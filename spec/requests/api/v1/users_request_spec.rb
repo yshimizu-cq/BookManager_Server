@@ -8,7 +8,7 @@ RSpec.describe "Api::V1::Users", type: :request do
   describe "POST /sign_up" do
     subject { post api_v1_sign_up_path, params: params }
 
-    context "response success" do
+    context "when return response success" do
       let(:params) { { email: sign_up_user.email, password: sign_up_user.password } }
 
       # spec_helperにaggregate_failures定義
@@ -18,7 +18,7 @@ RSpec.describe "Api::V1::Users", type: :request do
       end
     end
 
-    context "response error" do
+    context "when return response error" do
       context "with invalid email" do
         let(:params) { { email: invalid_user.email, password: sign_up_user.password } }
 
@@ -42,7 +42,7 @@ RSpec.describe "Api::V1::Users", type: :request do
   describe "POST /login" do
     subject { post api_v1_login_path, params: params }
 
-    context "response success" do
+    context "when return response success" do
       let(:params) { { email: login_user.email, password: login_user.password } }
 
       it "can log in" do
@@ -51,7 +51,7 @@ RSpec.describe "Api::V1::Users", type: :request do
       end
     end
 
-    context "response error" do
+    context "when return response error" do
       context "with invalid email" do
         let(:params) { { email: invalid_user.email, password: login_user.password } }
 
