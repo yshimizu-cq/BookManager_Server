@@ -60,7 +60,7 @@ RSpec.describe "Api::V1::Books", type: :request do
 
   describe "PATCH /books/:id" do
     context "when return response success" do
-      subject! { patch api_v1_books_path(book), params: params.to_json, headers: headers }
+      subject! { patch api_v1_book_path(book), params: params.to_json, headers: headers }
 
       let(:params) { attributes_for(:book, :new_book) }
       let(:headers) { headers_with_token }
@@ -73,7 +73,7 @@ RSpec.describe "Api::V1::Books", type: :request do
 
     context "when return response error" do
       context "without token" do
-        subject { patch "/api/v1/books/#{book.id}", params: params.to_json, headers: headers }
+        subject { patch api_v1_book_path(book), params: params.to_json, headers: headers }
 
         let(:params) { attributes_for(:book, :new_book) }
         let(:headers) { headers_without_token }
@@ -84,7 +84,7 @@ RSpec.describe "Api::V1::Books", type: :request do
       end
 
       context "when book is not related to current_user" do
-        subject { patch "/api/v1/books/#{other_book.id}", params: params.to_json, headers: headers }
+        subject { patch api_v1_book_path(other_book), params: params.to_json, headers: headers }
 
         let(:params) { attributes_for(:book, :new_book) }
         let(:headers) { headers_with_token }
