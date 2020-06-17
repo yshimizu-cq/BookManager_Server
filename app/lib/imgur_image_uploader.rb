@@ -7,10 +7,7 @@ class ImgurImageUploader
                                 { image: base64 },
                                 { Authorization: "Client-ID #{ENV['CLIENT_ID']}" })
     result_hash = JSON.load(response.body)
-    if result_hash['data']['link'].present?
-      return result_hash['data']['link']
-    else
-      raise "Imgurアップロードに失敗しました"
-    end
+    raise "Imgurアップロードに失敗しました" if result_hash['data']['link'].blank?
+    result_hash['data']['link']
   end
 end
